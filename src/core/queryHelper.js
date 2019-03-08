@@ -8,9 +8,16 @@ function QueryHelper(config = {}) {
     let _this = this;
     _this.config = config;
 
+    _this._translateCohort = QueryHelper.prototype._translateCohort.bind(this);
+
     // Bind member functions
     _this.buildPipeline = QueryHelper.prototype.buildPipeline.bind(this);
 }
+
+QueryHelper.prototype._translateCohort = function(cohort){
+
+
+};
 
 
 /**
@@ -43,7 +50,7 @@ QueryHelper.prototype.buildPipeline = function(query){
     query.data_requested.forEach(function (field) {
         fields[field] = 1;
     });
-    let match = [];
+    let match = _this._translateCohort(query.cohort);
 
     return pipeline =[
         {$match: {match}},

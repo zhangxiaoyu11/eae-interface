@@ -19,18 +19,27 @@ function QueryController(queryCollection,dataCollection,queryHelper) {
 /**
  * @fn getStatus
  * @desc HTTP method GET handler on this service status
- * @param query_id id of the query in mongo
+ * @param req Incoming message
+ * @param res Server Response
  */
-QueryController.prototype.processQuery = function(query_id) {
+QueryController.prototype.processQuery = function(req, res) {
     let _this = this;
-    return new Promise(function(resolve, reject) {
-        _this._queryCollection.findOne({id : query_id}).then(function(query){
+    let queryId = req.body.query_id;
+    try {
+        _this._queryCollection.findOne({id : queryId}).then(function(query){
             let pipeline = _this._queryHelper.buildPipeline(query);
-            resolve(_this._dataCollection.aggregate(pipeline));
+            let answer = _this._dataCollection.aggregate(pipeline);
+            res.status(200);
+            res.json(answer);
         },function(error){
-            reject('Error while processing the query ' + query_id, error);
+            res.status(401);
+            res.json('Error while processing the query ' + queryId, error);
         });
-    });
+    }
+    catch (error) {
+        res.status(510);
+        res.json('Error occurred', error);
+    }
 };
 
 module.exports = QueryController;
