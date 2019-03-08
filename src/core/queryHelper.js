@@ -15,8 +15,30 @@ function QueryHelper(config = {}) {
 }
 
 QueryHelper.prototype._translateCohort = function(cohort){
+    let match = {};
+
+    cohort.forEach(function (select) {
+
+        switch (select.op){
+            case "=":
+                // select.value must be an array
+                match[select.field] = { $in: select.value };
+                break;
+            case ">":
+                // select.value must be a float
+                match[select.field] = { $lt: select.value };
+                break;
+            case "<":
+                // select.value must be a float
+                match[select.field] = { $gt: select.value };
+                break;
+        }
 
 
+
+    }
+    );
+    return match
 };
 
 
@@ -53,8 +75,8 @@ QueryHelper.prototype.buildPipeline = function(query){
     let match = _this._translateCohort(query.cohort);
 
     return pipeline =[
-        {$match: {match}},
-        {$project: {fields}}
+        {$match: match},
+        {$project: fields}
     ];
 };
 
