@@ -10,6 +10,8 @@ const JobsControllerModule = require('./controllers/jobsController.js');
 const UsersControllerModule = require('./controllers/usersController.js');
 const ClusterControllerModule = require('./controllers/clusterController.js');
 const AccessLogger = require('./core/accessLogger.js');
+const QueryController = require('./controllers/QueryController.js');
+const QueryHelper = require('./core/queryHelper.js');
 
 /**
  * @class EaeInterface
@@ -60,13 +62,16 @@ EaeInterface.prototype.start = function() {
     return new Promise(function (resolve, reject) {
         _this._connectDb().then(function () {
             // Setup route using controllers
-            _this._setupStatusController();
+            // _this._setupStatusController();
+            //
+            // // Setup interface controller
+            // _this._setupInterfaceControllers();
 
-            // Setup interface controller
-            _this._setupInterfaceControllers();
+            // test
+            _this._setupQueryController();
 
             // Start status periodic update
-            _this.status_helper.startPeriodicUpdate(5 * 1000); // Update status every 5 seconds
+            // _this.status_helper.startPeriodicUpdate(5 * 1000); // Update status every 5 seconds
 
             resolve(_this.app); // All good, returns application
         }, function (error) {
@@ -112,7 +117,15 @@ EaeInterface.prototype._connectDb = function () {
             }
             _this.client = client;
             _this.db = _this.client.db();
-            resolve(true);
+
+            mongodb.connect("ukbiobank", {}, function (err, client_two) {
+                if (err !== null && err !== undefined) {
+                    reject(ErrorHelper('Failed to connect to mongoDB', err));
+                    return;
+                }
+                _this.db2 = client_two.db();
+                resolve(true);
+            });
         });
     });
 };
@@ -135,6 +148,11 @@ EaeInterface.prototype._setupStatusController = function () {
     _this.app.get('/status', _this.statusController.getStatus); // GET status
     _this.app.get('/specs', _this.statusController.getFullStatus); // GET Full status
 };
+
+
+
+
+
 
 
 /**
@@ -181,6 +199,8 @@ EaeInterface.prototype._setupInterfaceControllers = function() {
     // Status of the services in the eAE - Admin only
     _this.app.post('/servicesStatus', _this.clusterController.getServicesStatus);
 
+
+
     // Sends back a list of available carriers for data transfer
     // _this.app.get('/carriers', _this.carrierController.getCarriers);
 
@@ -203,5 +223,23 @@ EaeInterface.prototype._setupInterfaceControllers = function() {
     });
 };
 
+
+
+/**
+ * @fn _setupQueryController
+ * @desc Initialize query service routes and controller
+ * @private
+ */
+EaeInterface.prototype._setupQueryController = function () {
+    let _this = this;
+
+    let queryCollection = _this.db2.collection("QUERY_COLLECTION");
+    let dataCollection = _this.db2.collection("clinical_data_for_query_dev_2");
+    let queryHelper = new QueryHelper();
+
+    _this.queryController = new QueryController(queryCollection, dataCollection, queryHelper);
+    _this.app.post('/query', _this.queryController.processQuery); // GET status
+
+};
 
 module.exports = EaeInterface;
