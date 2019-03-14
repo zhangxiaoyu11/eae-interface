@@ -32,6 +32,12 @@ QueryHelper.prototype._translateCohort = function(cohort){
                 // select.value must be a float
                 match[select.field] = { $gt: select.value };
                 break;
+            case "derived":
+                // equation must only have + - * /
+
+                break;
+            default:
+                break;
         }
 
 

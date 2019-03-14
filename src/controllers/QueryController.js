@@ -28,9 +28,19 @@ QueryController.prototype.processQuery = function(req, res) {
     try {
         _this._queryCollection.findOne({id : queryId}).then(function(query){
             let pipeline = _this._queryHelper.buildPipeline(query);
-            let answer = _this._dataCollection.aggregate(pipeline);
-            res.status(200);
-            res.json(answer);
+            // let match = {'31.0.0': { $in: ['Male'] }};
+            // let fields = {_id: 0, m_eid: 1, '21022.0.0':1};
+            // let pipeline = [
+            //     {$match: match},
+            //     {$project: fields}
+            // ];
+            let answer = _this._dataCollection.aggregate(pipeline).toArray().then(function (results) {
+                res.status(200);
+                res.json(results);
+            },function(error){
+                res.status(500);
+                res.json('Mongo Query Error', error);
+            });
         },function(error){
             res.status(401);
             res.json('Error while processing the query ' + queryId, error);
