@@ -60,13 +60,13 @@ JobsController.prototype.createNewJob = function(req, res){
                 terminateCreation = true;
             }
             if(key === 'type'){
-                let listOfSupportedComputations = [Constants.EAE_COMPUTE_TYPE_PYTHON2, Constants.EAE_COMPUTE_TYPE_R,
+                let listOfSupportedComputations = [Constants.EAE_COMPUTE_TYPE_PYTHON2, Constants.EAE_COMPUTE_TYPE_PYTHON3, Constants.EAE_COMPUTE_TYPE_R,
                     Constants.EAE_COMPUTE_TYPE_TENSORFLOW, Constants.EAE_COMPUTE_TYPE_SPARK];
                 if(!(listOfSupportedComputations.includes(jobRequest[key]))) {
                     res.status(405);
                     res.json(ErrorHelper('The requested compute type is currently not supported. The list of supported computations: ' +
-                        Constants.EAE_COMPUTE_TYPE_PYTHON2 + ', ' + Constants.EAE_COMPUTE_TYPE_SPARK + ', ' + Constants.EAE_COMPUTE_TYPE_R + ', ' +
-                        Constants.EAE_COMPUTE_TYPE_TENSORFLOW));
+                        Constants.EAE_COMPUTE_TYPE_PYTHON2 + ', ' + Constants.EAE_COMPUTE_TYPE_PYTHON3 + ', ' + Constants.EAE_COMPUTE_TYPE_SPARK + ', ' + 
+			Constants.EAE_COMPUTE_TYPE_R + ', ' + Constants.EAE_COMPUTE_TYPE_TENSORFLOW));
                     terminateCreation = true;
                 }
             }
@@ -160,13 +160,13 @@ JobsController.prototype.createNewJobSwift = function(req, res){
                 terminateCreation = true;
             }
             if(key === 'type'){
-                let listOfSupportedComputations = [Constants.EAE_COMPUTE_TYPE_PYTHON2, Constants.EAE_COMPUTE_TYPE_R,
+                let listOfSupportedComputations = [Constants.EAE_COMPUTE_TYPE_PYTHON2, Constants.EAE_COMPUTE_TYPE_PYTHON3, Constants.EAE_COMPUTE_TYPE_R,
                     Constants.EAE_COMPUTE_TYPE_TENSORFLOW, Constants.EAE_COMPUTE_TYPE_SPARK];
                 if(!(listOfSupportedComputations.includes(jobRequest[key]))) {
                     res.status(405);
                     res.json(ErrorHelper('The requested compute type is currently not supported. The list of supported computations: ' +
-                        Constants.EAE_COMPUTE_TYPE_PYTHON2 + ', ' + Constants.EAE_COMPUTE_TYPE_SPARK + ', ' + Constants.EAE_COMPUTE_TYPE_R + ', ' +
-                        Constants.EAE_COMPUTE_TYPE_TENSORFLOW));
+                        Constants.EAE_COMPUTE_TYPE_PYTHON2 + ', ' + Constants.EAE_COMPUTE_TYPE_PYTHON3 + ', ' + Constants.EAE_COMPUTE_TYPE_SPARK + ', ' + 
+			Constants.EAE_COMPUTE_TYPE_R + ', ' + Constants.EAE_COMPUTE_TYPE_TENSORFLOW));
                     terminateCreation = true;
                 }
             }
